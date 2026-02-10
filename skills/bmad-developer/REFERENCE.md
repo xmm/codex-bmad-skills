@@ -4,11 +4,42 @@ This document provides detailed standards, patterns, and best practices for code
 
 ## Table of Contents
 
-1. [Clean Code Standards](#clean-code-standards)
-2. [Testing Standards](#testing-standards)
-3. [Code Review Checklist](#code-review-checklist)
-4. [Git Workflow](#git-workflow)
-5. [Common Patterns](#common-patterns)
+1. [Architecture Compliance Guardrails](#architecture-compliance-guardrails)
+2. [Clean Code Standards](#clean-code-standards)
+3. [Testing Standards](#testing-standards)
+4. [Code Review Checklist](#code-review-checklist)
+5. [Git Workflow](#git-workflow)
+6. [Common Patterns](#common-patterns)
+
+## Architecture Compliance Guardrails
+
+When `docs/bmad/architecture.md` exists, treat it as primary guidance for
+implementation and review.
+
+Constraint classes:
+
+1. Storage durability
+   - Runtime write paths must use architecture-defined persistent DB/cache/queue.
+   - Process-local in-memory storage may be used only for isolated tests.
+   - Preferred review signal: code path and tests that indicate persistence across process boundaries.
+
+2. Webhook ingress verification
+   - External webhook endpoints must enforce architecture-defined verification
+     (secret token, signature, timestamp/nonce, or equivalent).
+   - Missing/invalid verification must be rejected before business side effects.
+   - Preferred review signal: code path and negative-path tests for missing/invalid verification.
+
+3. Durable idempotency for webhook/event processing
+   - Idempotency keys/state must be durable when architecture requires reliability across retries/restarts.
+   - Retry branches, including retry-after-500, must avoid duplicate side effects.
+   - Preferred review signal: code path and tests for duplicate delivery and retry-after-500 behavior.
+
+During implementation and review, map relevant architecture constraints to
+concrete code and tests when practical.
+
+Review gate:
+- If architecture constraints are clearly violated, result is `Needs changes`.
+- If coverage is partial or ambiguous, record follow-up risks and missing tests.
 
 ## Clean Code Standards
 

@@ -53,16 +53,21 @@ Rules for generated artifacts:
 
 ## Mandatory Reference Load
 
-Before executing `dev-story` or `code-review`, read `REFERENCE.md` first.
-Treat `REFERENCE.md` as required context. Then load focused details from:
+Before executing `dev-story` or `code-review`, read `REFERENCE.md` first and treat it as required context. Then load focused details from:
 - `resources/clean-code-checklist.md`
 - `resources/testing-standards.md`
+
+Architecture Guardrails = `Architecture Compliance Guardrails` section
+(source of truth for architecture constraints).
+
+When `docs/bmad/architecture.md` exists, apply Architecture Guardrails.
 
 ## Output Contract
 
 - code and test changes in repository
 - optional review artifact `docs/bmad/code-review.md`
 - clear pass/fail status against acceptance criteria
+- for architecture-constrained stories: concise note on how key constraints were handled
 
 ## Core Workflow
 
@@ -71,6 +76,7 @@ Treat `REFERENCE.md` as required context. Then load focused details from:
 3. Add or update tests.
 4. Run quality checks and summarize outcomes.
 5. Report residual risks and follow-up items.
+6. If architecture constraints are clearly violated, return `Needs changes`; otherwise report residual risks and follow-up items.
 
 ## Implementation Approach
 
@@ -79,6 +85,7 @@ Treat `REFERENCE.md` as required context. Then load focused details from:
 - Parse acceptance criteria into explicit checks.
 - Identify touched modules, dependencies, and data contracts.
 - Load architecture constraints from `docs/bmad/architecture.md` when present.
+- Apply Architecture Guardrails.
 - Flag ambiguities and assumptions before implementation.
 
 ### 2. Plan Before Coding
@@ -123,6 +130,7 @@ Treat `REFERENCE.md` as required context. Then load focused details from:
 ### 6. Close with Traceable Outcome
 
 - Map each acceptance criterion to code and test evidence.
+- Summarize relevant architecture constraints and where they are addressed in code/tests.
 - Summarize changed files, key decisions, and residual risks.
 - For `code-review`, record findings using `templates/code-review.template.md`.
 
@@ -160,6 +168,7 @@ Treat `REFERENCE.md` as required context. Then load focused details from:
 ## Quality Gates
 
 - acceptance criteria are explicitly verified
+- architecture constraints are explicitly verified (storage, auth, idempotency when applicable)
 - tests and lint pass, or failures are reported clearly
 - no hidden scope expansion without note
 - implementation remains maintainable and reviewable

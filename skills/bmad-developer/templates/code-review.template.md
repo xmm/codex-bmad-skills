@@ -9,6 +9,12 @@ Use this checklist when reviewing code before marking a story complete or during
 - [ ] Edge cases are handled
 - [ ] Error scenarios are covered
 
+## Architecture Alignment (Required when docs/bmad/architecture.md exists)
+
+- [ ] Data storage implementation (database/cache/queue) aligns with architecture decisions; avoid unintended in-memory runtime defaults
+- [ ] Idempotency design matches architecture (including duplicate delivery/retry scenarios where applicable)
+- [ ] Architecture constraints are reviewed and reflected in code and tests where relevant
+
 ## Code Quality
 
 ### Clean Code
@@ -71,6 +77,7 @@ Use this checklist when reviewing code before marking a story complete or during
 - [ ] No hardcoded secrets, API keys, or passwords
 - [ ] Sensitive data is properly encrypted/hashed
 - [ ] User inputs are validated and sanitized
+- [ ] For external webhook/API ingress, authentication/verification (secret/signature/timestamp or equivalent) is enforced per architecture requirements
 - [ ] SQL injection prevented (parameterized queries)
 - [ ] XSS vulnerabilities prevented (output escaping)
 - [ ] Authentication and authorization properly implemented
