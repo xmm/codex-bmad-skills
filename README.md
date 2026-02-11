@@ -5,6 +5,10 @@
 
 Codex-first adaptation of the BMAD workflow model.
 
+## Quick Start Example
+
+Need a fast start with our skills? See [`docs/getting-started.md`](docs/getting-started.md).
+
 ## Attribution & Credit
 
 The BMAD Method (Breakthrough Method for Agile AI-Driven Development) is created and
