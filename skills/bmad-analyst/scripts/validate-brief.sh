@@ -45,8 +45,8 @@ if [ ! -f "$BRIEF_FILE" ]; then
     exit 1
 fi
 
-# Display header
-clear
+# Display header (avoid failing in non-interactive shells)
+clear >/dev/null 2>&1 || true
 echo ""
 echo -e "${BLUE}╔═══════════════════════════════════════════════════════════╗${NC}"
 echo -e "${BLUE}║                                                           ║${NC}"
@@ -73,7 +73,7 @@ for section in "${REQUIRED_SECTIONS[@]}"; do
        grep -qi "^## ${section}" "$BRIEF_FILE" || \
        grep -qi "^### ${section}" "$BRIEF_FILE"; then
         echo -e "${GREEN}✓${NC} $section"
-        ((FOUND_SECTIONS++))
+        FOUND_SECTIONS=$((FOUND_SECTIONS + 1))
     else
         echo -e "${RED}✗${NC} $section ${YELLOW}(MISSING)${NC}"
         MISSING_SECTIONS+=("$section")
