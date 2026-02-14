@@ -2,7 +2,7 @@
 # Architecture Document Validation Script
 # Validates architecture document for completeness and NFR coverage
 
-set -e
+set -euo pipefail
 
 # Color codes for output
 RED='\033[0;31m'
@@ -50,17 +50,17 @@ check_section() {
 
     if grep -qi "$search_pattern" "$ARCH_DOC"; then
         echo -e "${GREEN}[PASS]${NC} $section_name"
-        ((PASS_COUNT++))
+        ((PASS_COUNT+=1))
         return 0
     else
         if [ "$required" = "required" ]; then
             echo -e "${RED}[FAIL]${NC} $section_name - MISSING"
-            ((FAIL_COUNT++))
+            ((FAIL_COUNT+=1))
         else
             echo -e "${YELLOW}[WARN]${NC} $section_name - Not found (optional)"
-            ((WARN_COUNT++))
+            ((WARN_COUNT+=1))
         fi
-        return 1
+        return 0
     fi
 }
 
@@ -72,17 +72,17 @@ check_keyword() {
 
     if grep -qi "$keyword" "$ARCH_DOC"; then
         echo -e "${GREEN}[PASS]${NC} $description"
-        ((PASS_COUNT++))
+        ((PASS_COUNT+=1))
         return 0
     else
         if [ "$required" = "required" ]; then
             echo -e "${RED}[FAIL]${NC} $description - MISSING"
-            ((FAIL_COUNT++))
+            ((FAIL_COUNT+=1))
         else
             echo -e "${YELLOW}[WARN]${NC} $description - Not found"
-            ((WARN_COUNT++))
+            ((WARN_COUNT+=1))
         fi
-        return 1
+        return 0
     fi
 }
 
@@ -147,10 +147,10 @@ fi
 
 if [ $PATTERN_FOUND -eq 0 ]; then
     echo -e "${RED}[FAIL]${NC} No architectural pattern clearly identified"
-    ((FAIL_COUNT++))
+    ((FAIL_COUNT+=1))
 else
     echo -e "${GREEN}[PASS]${NC} Architectural pattern identified"
-    ((PASS_COUNT++))
+    ((PASS_COUNT+=1))
 fi
 echo ""
 
@@ -158,10 +158,10 @@ echo -e "${BLUE}6. Integration Patterns${NC}"
 echo "-----------------------"
 if grep -qi "rest\|restful\|graphql\|grpc\|message queue\|kafka\|event" "$ARCH_DOC"; then
     echo -e "${GREEN}[PASS]${NC} Integration pattern specified"
-    ((PASS_COUNT++))
+    ((PASS_COUNT+=1))
 else
     echo -e "${YELLOW}[WARN]${NC} Integration pattern not clearly specified"
-    ((WARN_COUNT++))
+    ((WARN_COUNT+=1))
 fi
 echo ""
 
