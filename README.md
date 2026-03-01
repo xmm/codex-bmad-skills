@@ -3,134 +3,174 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 [![OpenAI Codex](https://img.shields.io/badge/OpenAI%20Codex-Native-orange.svg)](https://openai.com/codex/)
 
-Codex-first adaptation of the BMAD workflow model.
+BMAD Skills for OpenAI Codex adds a structured, intent-driven workflow to Codex for **product discovery, planning, architecture, and implementation.**
 
-## Quick Start Example
+It installs reusable BMAD skills, introduces `bmad:*` intents, and keeps project workflow state in explicit YAML files inside your repository.
 
-Need a fast start with our skills? See [`docs/getting-started.md`](docs/getting-started.md).
+## What This Project Does
 
-## Attribution & Credit
+This repository provides:
 
-The BMAD Method (Breakthrough Method for Agile AI-Driven Development) is created and
-maintained by the BMAD Code Organization.
+- BMAD skills that can be installed into Codex
+- intent-based workflow routing via `bmad:*`
+- project-local workflow state in `bmad/*.yaml`
+- a repeatable path from idea to implementation
 
-All credit for the BMAD methodology belongs to:
+Use it when you want Codex to guide work through defined phases instead of relying on ad-hoc prompts.
 
-- BMAD Code Organization: https://github.com/bmad-code-org
-- Original BMAD Method: https://github.com/bmad-code-org/BMAD-METHOD
-- Website: https://bmadcodes.com/bmad-method/
-- YouTube: https://www.youtube.com/@BMadCode
-- Discord: https://discord.gg/gk8jAdXWmj
+## Who This Is For
 
-This repository is an implementation and adaptation of BMAD for OpenAI Codex.
-The methodology, core workflow patterns, and BMAD concepts remain the intellectual
-property of the BMAD Code Organization.
+This project is for:
 
-This OpenAI Codex adaptation was initially based on the
-[BMAD Method v6 for Claude Code](https://github.com/aj-geddes/claude-code-bmad-skills)
+- developers using OpenAI Codex as a primary coding assistant
+- teams that want a consistent AI-assisted delivery workflow
+- projects that need explicit planning and traceable workflow state
 
-Codex-specific adaptations in this repository include:
+## Quick Start
 
-- OpenAI Codex runtime contract (`.agents/skills` global and project roots)
-- intent-based workflow routing (`bmad:*`) instead of slash commands
-- explicit YAML workflow state in `bmad/*.yaml`
-- migration-safe preference for project-local skills over global collisions
+### Requirements
 
-## The BMAD Workflow
+- `yq` v4+
+- `python3` (or `python`)
 
-BMAD for OpenAI Codex uses intent IDs (not slash commands) and tracks workflow state in
-`bmad/workflow-status.yaml`.
+The installers validate both dependencies before install.
 
-Recommended orchestration flow:
+### Install
 
-1. `bmad:init`
-2. `bmad:status`
-3. `bmad:next`
-4. Run the recommended phase intent
-5. Update workflow state in YAML
+#### Install to the default global path
 
-### Phase 1: Analysis
+```bash
+./installers/install-codex.sh
+```
 
-Primary skill: `bmad-analyst`
+#### Install to a custom path (example: project-local)
 
-Intents:
+```bash
+./installers/install-codex.sh --dest "<project>/.agents/skills"
+```
+
+#### Windows PowerShell
+
+```powershell
+./installers/install-codex.ps1
+./installers/install-codex.ps1 -Dest "<project>\.agents\skills"
+```
+
+Notes:
+
+- `--dest` and `-Dest` are optional
+- the default destination is `$HOME/.agents/skills`
+- restart Codex after installation so it reloads newly installed skills
+
+### Start Codex
+
+```bash
+codex
+```
+
+### Initialize BMAD in a Project
+
+```text
+bmad:init name "My Project" communication language is English documentation language is English
+```
+
+### Check Current Status
+
+```text
+bmad:status
+bmad:next
+```
+
+For a guided walkthrough, see [Getting Started](docs/getting-started.md).
+
+## What Gets Created
+
+After initialization, the project contains:
+
+- `bmad/project.yaml` - project settings and language preferences
+- `bmad/workflow-status.yaml` - current workflow phase and progress
+- `bmad/sprint-status.yaml` - sprint and delivery tracking
+- `docs/bmad/` - generated BMAD documents
+- `docs/stories/` - implementation stories
+
+## How The Workflow Works
+
+BMAD in Codex is organized into four main phases.
+
+### 1. Analysis
+
+Use this phase to explore the problem space and define direction.
+
+Typical intents:
 
 - `bmad:product-brief`
 - `bmad:research`
 - `bmad:brainstorm`
 
-Primary outputs:
+Typical outputs:
 
 - `docs/bmad/product-brief.md`
 - `docs/bmad/research-report.md`
 - `docs/bmad/brainstorm.md`
 
-When: start of a new project or major feature discovery.
+### 2. Planning
 
-### Phase 2: Planning
+Use this phase to turn discovery into scoped plans and product documentation.
 
-Primary skills: `bmad-product-manager`, `bmad-ux-designer`
-
-Intents:
+Typical intents:
 
 - `bmad:prd`
 - `bmad:tech-spec`
 - `bmad:prioritize`
 - `bmad:ux-design`
 
-Primary outputs:
+Typical outputs:
 
 - `docs/bmad/prd.md`
 - `docs/bmad/tech-spec.md`
 - `docs/bmad/prioritization.md`
 - `docs/bmad/ux-design.md`
 
-When: after Analysis, before architecture design.
+Planning rules:
 
-Level rules:
+- level 0-1 projects require `tech-spec`
+- level 2-4 projects require `prd` and `architecture`
 
-- Level 0-1 projects require `tech-spec`
-- Level 2-4 projects require `prd` and `architecture`
+### 3. Solutioning
 
-### Phase 3: Solutioning
+Use this phase to define architecture and validate readiness before implementation.
 
-Primary skill: `bmad-architect`
-
-Intents:
+Typical intents:
 
 - `bmad:architecture`
 - `bmad:gate-check`
 
-Primary outputs:
+Typical outputs:
 
 - `docs/bmad/architecture.md`
 - `docs/bmad/gate-check.md`
 
-When: after Planning, before implementation.
+### 4. Implementation
 
-### Phase 4: Implementation
+Use this phase to plan delivery, create stories, build, and review.
 
-Primary skills: `bmad-scrum-master`, `bmad-developer`
-
-Intents:
+Typical intents:
 
 - `bmad:sprint-plan`
 - `bmad:create-story`
 - `bmad:dev-story`
 - `bmad:code-review`
 
-Primary outputs:
+Typical outputs:
 
 - `docs/bmad/sprint-plan.md`
 - `docs/stories/STORY-*.md`
 - implemented code and tests in the repository
 - optional `docs/bmad/code-review.md`
 
-When: iterative delivery after architecture/gate readiness.
+### Extension and Innovation
 
-### Extension and Innovation (Any Phase)
-
-These intents are optional and can be used when needed:
+These intents are optional and can be used in any phase:
 
 - `bmad:create-skill`
 - `bmad:create-workflow`
@@ -138,91 +178,48 @@ These intents are optional and can be used when needed:
 - `bmad:research-deep`
 - `bmad:user-flow`
 
-## Status
+## Core Intents
 
-Migration is in progress on this branch, but the core Codex path is already usable:
+### Orchestration
 
-- skill namespace: `skills/bmad-*`
-- installers: `installers/install-codex.sh`, `installers/install-codex.ps1`
-- project artifacts: `bmad/*.yaml`
-- orchestration scripts: `skills/bmad-orchestrator/scripts/*`
+- `bmad:init`
+- `bmad:status`
+- `bmad:next`
 
-## Runtime Requirements
+### Discovery
 
-- `yq` v4+
-- `python3` (or `python`)
+- `bmad:product-brief`
+- `bmad:research`
+- `bmad:brainstorm`
 
-Installer validates both dependencies before install.
+### Planning
 
-## Install
+- `bmad:prd`
+- `bmad:tech-spec`
+- `bmad:prioritize`
 
-### Install to default global path
+### Architecture
 
-```bash
-./installers/install-codex.sh
-```
+- `bmad:architecture`
+- `bmad:gate-check`
 
-### Install to custom path (example: project-local)
+### Delivery
 
-```bash
-codex-bmad-skills/installers/install-codex.sh --dest "<project>/.agents/skills"
-```
+- `bmad:sprint-plan`
+- `bmad:create-story`
+- `bmad:dev-story`
+- `bmad:code-review`
 
-PowerShell:
+### UX and Extensions
 
-```powershell
-codex-bmad-skills/installers/install-codex.ps1
-codex-bmad-skills/installers/install-codex.ps1 -Dest "<project>\.agents\skills"
-```
+- `bmad:ux-design`
+- `bmad:user-flow`
+- `bmad:ideate`
+- `bmad:research-deep`
+- `bmad:create-skill`
+- `bmad:create-workflow`
 
-Notes:
-
-- `--dest` / `-Dest` is optional
-- default destination is `$HOME/.agents/skills`
-- restart Codex after installation so it reloads and sees newly installed skills
-
-## Run Codex and Initialize BMAD in Project
-
-After skills installation, run Codex application (CLI, Desktop) and initialize project artifacts:
-
-```bash
-codex
-```
-
-### Initialize a project
-
-```codex
-› bmad:init name "My Project" communication language is Swedish documentation language is English
-```
-
-
-This creates:
-
-- `bmad/project.yaml`
-- `bmad/workflow-status.yaml`
-- `bmad/sprint-status.yaml`
-- `docs/bmad/`
-- `docs/stories/`
-
-## Check Status and Next Action
-
-```codex
-bmad:status
-bmad:next
-```
-
-## BMAD Intent IDs
-
-- Orchestration: `bmad:init`, `bmad:status`, `bmad:next`
-- Discovery: `bmad:product-brief`, `bmad:research`, `bmad:brainstorm`
-- Planning: `bmad:prd`, `bmad:tech-spec`, `bmad:prioritize`
-- Architecture: `bmad:architecture`, `bmad:gate-check`
-- Delivery: `bmad:sprint-plan`, `bmad:create-story`, `bmad:dev-story`, `bmad:code-review`
-- UX: `bmad:ux-design`, `bmad:user-flow`
-- Creative: `bmad:ideate`, `bmad:research-deep`
-- Extensibility: `bmad:create-skill`, `bmad:create-workflow`
-
-## Layout
+## Repository Layout
 
 ```text
 .
@@ -243,35 +240,46 @@ bmad:next
 └── docs/
 ```
 
+Key directories:
+
+- `skills/` - the BMAD skills used by Codex
+- `installers/` - install scripts for supported environments
+- `templates/` - reusable templates for generated artifacts
+- `docs/` - documentation and examples
+
+## Current Status
+
+The core Codex workflow is already usable today.
+
+Current implementation focus:
+
+- Codex-native skill installation
+- intent-based orchestration
+- YAML-backed project workflow state
+- migration-safe preference for project-local skills over global collisions
+
+## Learn More
+
+- [Getting Started](docs/getting-started.md)
+- [Contributing](CONTRIBUTING.md)
+- [Changelog](CHANGELOG.md)
+
+## Attribution
+
+The BMAD Method (Breakthrough Method for Agile AI-Driven Development) is created and maintained by the BMAD Code Organization.
+
+This repository is an implementation and adaptation of BMAD for OpenAI Codex. The methodology, core workflow patterns, and BMAD concepts remain the intellectual property of the BMAD Code Organization.
+
+This OpenAI Codex adaptation was initially based on [BMAD Method v6 for Claude Code](https://github.com/aj-geddes/claude-code-bmad-skills).
+
+Original sources:
+
+- BMAD Code Organization: https://github.com/bmad-code-org
+- Original BMAD Method: https://github.com/bmad-code-org/BMAD-METHOD
+- Website: https://bmadcodes.com/bmad-method/
+- YouTube: https://www.youtube.com/@BMadCode
+- Discord: https://discord.gg/gk8jAdXWmj
+
 ## License
 
-MIT License
-
-Copyright (c) 2025 BMAD Method v6 Contributors
-
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
-
----
-
-**IMPORTANT:** The **BMAD Method™** name, methodology, workflow patterns, and concepts are the intellectual property of the **BMAD Code Organization**. This license covers only the OpenAI Codex implementation code in this repository, not the BMAD Method itself.
-
-**Original BMAD Method**: https://github.com/bmad-code-org/BMAD-METHOD  
-**Original BMAD Method v6 for Claude Code**: https://github.com/aj-geddes/claude-code-bmad-skills
-
----
+MIT License. See [LICENSE](LICENSE).
