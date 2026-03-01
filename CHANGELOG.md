@@ -7,6 +7,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [1.3.2] - 2026-03-01
+
+### Added
+- Added a direct GitHub link to the original `xmm/codex-bmad-skills` repository in the root `README.md`.
+
+### Changed
+- Updated `installers/install-codex.sh` and `installers/install-codex.ps1` to copy the root `README.md` into the install destination as `bmad-README.md` so project-local installs retain a visible reference to the source project.
+- Updated both installers so `bmad-README.md` respects `--force`/`-Force`: existing files are skipped by default and only overwritten when force is requested, including accurate `--dry-run` logging.
+
+---
+
 ## [1.3.1] - 2026-02-18
 
 ### Fixed
@@ -90,6 +101,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Initial adaptation baseline for OpenAI Codex.
 - Project foundation based on [aj-geddes/claude-code-bmad-skills](https://github.com/aj-geddes/claude-code-bmad-skills).
 
+[1.3.2]: https://github.com/xmm/codex-bmad-skills/releases/tag/v1.3.2
 [1.3.1]: https://github.com/xmm/codex-bmad-skills/releases/tag/v1.3.1
 [1.3.0]: https://github.com/xmm/codex-bmad-skills/releases/tag/v1.3.0
 [1.2.0]: https://github.com/xmm/codex-bmad-skills/releases/tag/v1.2.0

@@ -7,6 +7,8 @@ BMAD Skills for OpenAI Codex adds a structured, intent-driven workflow to Codex 
 
 It installs reusable BMAD skills, introduces `bmad:*` intents, and keeps project workflow state in explicit YAML files inside your repository.
 
+Original GitHub project: [xmm/codex-bmad-skills](https://github.com/xmm/codex-bmad-skills)
+
 ## What This Project Does
 
 This repository provides:

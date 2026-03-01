@@ -111,6 +111,38 @@ function Write-CodexVersionFile(
     Write-Ok "Wrote version metadata: $versionFile"
 }
 
+function Copy-ProjectReadme(
+    [string]$RepoRoot,
+    [string]$DestPath,
+    [bool]$DryRunMode,
+    [bool]$ForceMode
+) {
+    $sourceReadme = Join-Path $RepoRoot "README.md"
+    $targetReadme = Join-Path $DestPath "bmad-README.md"
+
+    if (-not (Test-Path $sourceReadme)) {
+        throw "Project README not found: $sourceReadme"
+    }
+
+    if ((Test-Path $targetReadme) -and (-not $ForceMode)) {
+        Write-Warn "Project README exists, skipping: $targetReadme"
+        return
+    }
+
+    if ($DryRunMode) {
+        if (Test-Path $targetReadme) {
+            Write-Info "Would overwrite project README -> $targetReadme"
+        }
+        else {
+            Write-Info "Would copy project README -> $targetReadme"
+        }
+        return
+    }
+
+    Copy-Item -Path $sourceReadme -Destination $targetReadme -Force
+    Write-Ok "Copied project README: $targetReadme"
+}
+
 function Test-RuntimeRequirements {
     $yqCmd = Get-Command yq -ErrorAction SilentlyContinue
     if (-not $yqCmd) {
@@ -160,6 +192,8 @@ if ($SkillDirs.Count -eq 0) {
 if (-not $DryRun) {
     New-Item -ItemType Directory -Force -Path $Dest | Out-Null
 }
+
+Copy-ProjectReadme -RepoRoot $RepoRoot -DestPath $Dest -DryRunMode $DryRun.IsPresent -ForceMode $Force.IsPresent
 
 $Installed = 0
 $Skipped = 0

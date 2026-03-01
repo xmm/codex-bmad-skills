@@ -101,6 +101,30 @@ EOF
   log OK "Wrote version metadata: $version_file"
 }
 
+copy_project_readme() {
+  local source_readme="$REPO_ROOT/README.md"
+  local target_readme="$DEST/bmad-README.md"
+
+  [[ -f "$source_readme" ]] || die "Project README not found: $source_readme"
+
+  if [[ -e "$target_readme" && "$FORCE" -ne 1 ]]; then
+    log WARN "Project README exists, skipping: $target_readme"
+    return
+  fi
+
+  if [[ "$DRY_RUN" -eq 1 ]]; then
+    if [[ -e "$target_readme" ]]; then
+      log INFO "Would overwrite project README -> $target_readme"
+    else
+      log INFO "Would copy project README -> $target_readme"
+    fi
+    return
+  fi
+
+  cp "$source_readme" "$target_readme"
+  log OK "Copied project README: $target_readme"
+}
+
 expand_dest_path() {
   local path="$1"
 
@@ -202,6 +226,8 @@ fi
 if [[ "$DRY_RUN" -eq 0 ]]; then
   mkdir -p "$DEST"
 fi
+
+copy_project_readme
 
 INSTALLED=0
 SKIPPED=0
