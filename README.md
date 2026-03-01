@@ -236,7 +236,6 @@ These intents are optional and can be used in any phase:
 │   ├── bmad-creative-intelligence/
 │   ├── bmad-builder/
 │   └── bmad-shared/
-├── templates/
 └── docs/
 ```
 
@@ -244,7 +243,6 @@ Key directories:
 
 - `skills/` - the BMAD skills used by Codex
 - `installers/` - install scripts for supported environments
-- `templates/` - reusable templates for generated artifacts
 - `docs/` - documentation and examples
 
 ## Current Status
