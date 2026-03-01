@@ -111,6 +111,23 @@ function Write-CodexVersionFile(
     Write-Ok "Wrote version metadata: $versionFile"
 }
 
+function Remove-CodexVersionFile(
+    [string]$VersionFile,
+    [bool]$DryRunMode
+) {
+    if ($DryRunMode -or (-not (Test-Path $VersionFile))) {
+        return
+    }
+
+    try {
+        Remove-Item -Path $VersionFile -Force
+        Write-Ok "Removed temporary version metadata: $VersionFile"
+    }
+    catch {
+        Write-Warn "Failed to remove temporary version metadata: $VersionFile ($($_.Exception.Message))"
+    }
+}
+
 function Copy-ProjectReadme(
     [string]$RepoRoot,
     [string]$DestPath,
@@ -172,54 +189,61 @@ function Test-RuntimeRequirements {
 
 $RepoRoot = Split-Path -Parent $PSScriptRoot
 $SkillsSource = Join-Path $RepoRoot "skills"
-Test-RuntimeRequirements
-$versionInfo = Resolve-CodexBmadVersion -RepoRoot $RepoRoot
-Write-Ok "Installable codex-bmad-skills version: $($versionInfo.Version) (source=$($versionInfo.Source))"
-Write-CodexVersionFile -RepoRoot $RepoRoot -Version $versionInfo.Version -Source $versionInfo.Source -DryRunMode $DryRun.IsPresent
+$VersionFile = Join-Path $RepoRoot "skills/bmad-orchestrator/version.yaml"
 
-if (-not (Test-Path $SkillsSource)) {
-    throw "No skill source directory found (expected skills/)"
-}
+try {
+    Test-RuntimeRequirements
+    $versionInfo = Resolve-CodexBmadVersion -RepoRoot $RepoRoot
+    Write-Ok "Installable codex-bmad-skills version: $($versionInfo.Version) (source=$($versionInfo.Source))"
+    Write-CodexVersionFile -RepoRoot $RepoRoot -Version $versionInfo.Version -Source $versionInfo.Source -DryRunMode $DryRun.IsPresent
 
-$SkillDirs = Get-ChildItem -Path $SkillsSource -Directory |
-    Where-Object { Test-Path (Join-Path $_.FullName "SKILL.md") } |
-    Sort-Object Name
-
-if ($SkillDirs.Count -eq 0) {
-    throw "No installable skills were found in $SkillsSource"
-}
-
-if (-not $DryRun) {
-    New-Item -ItemType Directory -Force -Path $Dest | Out-Null
-}
-
-Copy-ProjectReadme -RepoRoot $RepoRoot -DestPath $Dest -DryRunMode $DryRun.IsPresent -ForceMode $Force.IsPresent
-
-$Installed = 0
-$Skipped = 0
-
-foreach ($Skill in $SkillDirs) {
-    $Target = Join-Path $Dest $Skill.Name
-
-    if ((Test-Path $Target) -and (-not $Force)) {
-        Write-Warn "Skill exists, skipping: $Target"
-        $Skipped++
-        continue
+    if (-not (Test-Path $SkillsSource)) {
+        throw "No skill source directory found (expected skills/)"
     }
 
-    if ($DryRun) {
-        Write-Info "Would install $($Skill.Name) -> $Target"
+    $SkillDirs = Get-ChildItem -Path $SkillsSource -Directory |
+        Where-Object { Test-Path (Join-Path $_.FullName "SKILL.md") } |
+        Sort-Object Name
+
+    if ($SkillDirs.Count -eq 0) {
+        throw "No installable skills were found in $SkillsSource"
+    }
+
+    if (-not $DryRun) {
+        New-Item -ItemType Directory -Force -Path $Dest | Out-Null
+    }
+
+    Copy-ProjectReadme -RepoRoot $RepoRoot -DestPath $Dest -DryRunMode $DryRun.IsPresent -ForceMode $Force.IsPresent
+
+    $Installed = 0
+    $Skipped = 0
+
+    foreach ($Skill in $SkillDirs) {
+        $Target = Join-Path $Dest $Skill.Name
+
+        if ((Test-Path $Target) -and (-not $Force)) {
+            Write-Warn "Skill exists, skipping: $Target"
+            $Skipped++
+            continue
+        }
+
+        if ($DryRun) {
+            Write-Info "Would install $($Skill.Name) -> $Target"
+            $Installed++
+            continue
+        }
+
+        if (Test-Path $Target) {
+            Remove-Item -Path $Target -Recurse -Force
+        }
+
+        Copy-Item -Path $Skill.FullName -Destination $Target -Recurse
+        Write-Ok "Installed $($Skill.Name)"
         $Installed++
-        continue
     }
 
-    if (Test-Path $Target) {
-        Remove-Item -Path $Target -Recurse -Force
-    }
-
-    Copy-Item -Path $Skill.FullName -Destination $Target -Recurse
-    Write-Ok "Installed $($Skill.Name)"
-    $Installed++
+    Write-Ok "Done. source=$SkillsSource dest=$Dest installed=$Installed skipped=$Skipped"
 }
-
-Write-Ok "Done. source=$SkillsSource dest=$Dest installed=$Installed skipped=$Skipped"
+finally {
+    Remove-CodexVersionFile -VersionFile $VersionFile -DryRunMode $DryRun.IsPresent
+}

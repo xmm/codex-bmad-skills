@@ -101,6 +101,21 @@ EOF
   log OK "Wrote version metadata: $version_file"
 }
 
+cleanup_codex_version_file() {
+  local exit_code=$?
+  local version_file="$REPO_ROOT/skills/bmad-orchestrator/version.yaml"
+
+  if [[ "$DRY_RUN" -eq 0 && -f "$version_file" ]]; then
+    if rm -f "$version_file"; then
+      log OK "Removed temporary version metadata: $version_file"
+    else
+      log WARN "Failed to remove temporary version metadata: $version_file"
+    fi
+  fi
+
+  return "$exit_code"
+}
+
 copy_project_readme() {
   local source_readme="$REPO_ROOT/README.md"
   local target_readme="$DEST/bmad-README.md"
@@ -196,6 +211,7 @@ while [[ $# -gt 0 ]]; do
 done
 
 REPO_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+trap cleanup_codex_version_file EXIT
 check_runtime_requirements
 DEST="$(expand_dest_path "$DEST")"
 

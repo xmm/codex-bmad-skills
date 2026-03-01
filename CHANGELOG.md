@@ -7,6 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [1.3.3] - 2026-03-01
+
+### Fixed
+- Updated `installers/install-codex.sh` and `installers/install-codex.ps1` to remove the temporary source `skills/bmad-orchestrator/version.yaml` after copying skills to the install destination, so installation no longer leaves generated metadata behind in the repository.
+
+---
+
 ## [1.3.2] - 2026-03-01
 
 ### Added
