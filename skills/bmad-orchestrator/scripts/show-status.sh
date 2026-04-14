@@ -102,7 +102,13 @@ echo "Phase 4: Implementation"
 print_workflow phase_4_implementation sprint_planning "sprint_planning"
 stories_total=$(yq eval '.phases.phase_4_implementation.workflows.stories.total // 0' "$STATUS_FILE")
 stories_done=$(yq eval '.phases.phase_4_implementation.workflows.stories.completed // 0' "$STATUS_FILE")
-echo "  [ ] stories (${stories_done}/${stories_total} completed)"
+stories_marker="[ ]"
+if [[ "$stories_total" -gt 0 && "$stories_done" -eq "$stories_total" ]]; then
+  stories_marker="[x]"
+elif [[ "$stories_done" -gt 0 ]]; then
+  stories_marker="[~]"
+fi
+echo "  ${stories_marker} stories (${stories_done}/${stories_total} completed)"
 echo ""
 
 SHARED_SCRIPTS_DIR="$(cd "$ORCHESTRATOR_ROOT/.." && pwd)/bmad-shared/scripts"
