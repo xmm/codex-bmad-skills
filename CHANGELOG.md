@@ -7,6 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [1.3.4] - 2026-04-20
+
+### Fixed
+- Updated `skills/bmad-orchestrator/scripts/show-status.sh` to render a progress-aware marker for the `stories` workflow in `bmad:status`: `[ ]` when no stories are done, `[~]` when partially complete, and `[x]` when all stories are complete.
+
+---
+
 ## [1.3.3] - 2026-03-01
 
 ### Fixed
@@ -108,6 +115,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Initial adaptation baseline for OpenAI Codex.
 - Project foundation based on [aj-geddes/claude-code-bmad-skills](https://github.com/aj-geddes/claude-code-bmad-skills).
 
+[1.3.4]: https://github.com/xmm/codex-bmad-skills/releases/tag/v1.3.4
+[1.3.3]: https://github.com/xmm/codex-bmad-skills/releases/tag/v1.3.3
 [1.3.2]: https://github.com/xmm/codex-bmad-skills/releases/tag/v1.3.2
 [1.3.1]: https://github.com/xmm/codex-bmad-skills/releases/tag/v1.3.1
 [1.3.0]: https://github.com/xmm/codex-bmad-skills/releases/tag/v1.3.0
