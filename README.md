@@ -2,6 +2,7 @@
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 [![OpenAI Codex](https://img.shields.io/badge/OpenAI%20Codex-Native-orange.svg)](https://openai.com/codex/)
+[![Mentioned in Awesome Codex CLI](https://awesome.re/mentioned-badge.svg)](https://github.com/RoggeOhta/awesome-codex-cli)
 
 BMAD Skills for OpenAI Codex adds a structured, intent-driven workflow to Codex for **product discovery, planning, architecture, and implementation.**
 
